@@ -12,7 +12,7 @@ const db = mysql.createConnection(
   );
 
 function insertManagers() {
-    const sql = `INSERT INTO employee (manager_id)
+    const sql = `UPDATE employee manager_id = employee.id WHERE 
     VALUES (employee.id) WHERE employee.role_id = emp_role.id AND emp_role.department_id = department.id`;
     db.query(sql, (err, result) => {
         if (err) {
@@ -85,7 +85,6 @@ function populateRoles() {
             if (err) {
                 console.log(err);
             } else {
-                // console.log('result:', result);
                 for (i = 0; i < result.length; i++) {
                     let roleStr = `${result[i].id}: ${result[i].title} in ${result[i].department_id}.`
                     roleArr.push(roleStr);
@@ -98,13 +97,13 @@ function populateRoles() {
 
 function changeEmployeeRole(emp, newRole) {
     let nameArr = emp.split(' ');
-    const firstName = nameArr[0];
-    const lastName = nameArr[1];
+    const firstName = nameArr[0].toString();
+    const lastName = nameArr[1].toString();
     let roleArr = newRole.split(' ');
-    let roleVar = roleArr[0];
-    roleVar = Number(roleVar[0]);
+    let roleVar = parseInt(roleArr[0]);
+    // roleVar = parseInt(roleVar);
 
-    const sql = `UPDATE employee SET role_id = (?) WHERE first_name = ${String(firstName)} AND last_name = ${String(lastName)}`;
+    const sql = `UPDATE employee SET role_id = (?) WHERE first_name = "${firstName}"`; // AND last_name = ${String(lastName)}`;
 
     db.query(sql, roleVar, (err, rows) => {
         if (err) {

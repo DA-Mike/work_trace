@@ -118,37 +118,10 @@ function updateEmployee(emps) {
                 ])
                 .then(val => {
                     changeEmployeeRole(empChoice, val.choice);
+                    asyncHelper(val);
                 })
             })();
         });
-            // resolve();
-    //         inquirer
-    //             .prompt([
-    //                 {
-    //                     type: 'input',
-    //                     name: 'firstName',
-    //                     message: "Please enter employee's first name."
-    //                 },
-    //                 {
-    //                     type: 'input',
-    //                     name: 'lastName',
-    //                     message: "Please enter employee's last name."
-    //                 },
-    //                 {
-    //                     type: 'input',
-    //                     name: 'roleId',
-    //                     message: "Please enter employee's Role ID."
-    //                 }
-    //             ])
-    //     })
-    // // })
-    //     .then(val => {
-    //         const details = Object.values(val);
-    //         console.log(details);
-    //         // newEmployee(details);
-        // })
-        // asyncHelper(val);
-        
 }
 
 function viewDepartments(val) {
