@@ -11,11 +11,27 @@ const db = mysql.createConnection(
     console.log(`Connected to the company_db database.`)
   );
 
+function insertManagers() {
+    const sql = `INSERT INTO employee (manager_id)
+    VALUES (employee.id) WHERE employee.role_id = emp_role.id AND emp_role.department_id = department.id`;
+    db.query(sql, (err, result) => {
+        if (err) {
+        console.log(err);
+        return;
+        } else {
+            console.log("Success!");
+        }
+  });
+}
+
 function showAllEmployees() {
-    const sql = `SELECT * FROM employee`;
+    const sql = `SELECT employee.id AS emp_ID, employee.first_name, employee.last_name, employee.role_id, emp_role.title, emp_role.salary, emp_role.department_id, department.department_name
+    FROM employee
+    JOIN emp_role ON employee.role_id = emp_role.id
+    JOIN department ON emp_role.department_id = department.id;`;
     db.query(sql, (err, rows) => {
         if (err) {
-            res.status(500).json({ error: err.message });
+            console.log(err);;
             return;
         }
         console.log("\n");
@@ -40,29 +56,71 @@ function newEmployee(detailsArr) {
 function populateEmployees() {
     const sql = `SELECT first_name, last_name FROM employee`;
     const empArr = [];
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.log(err);
-      return;
-    } else {
-        // console.log(result);
-        for (i = 0; i < result.length; i++) {
-            let empStr = '';
-            empStr = empStr.concat(result[i].first_name);
-            empStr = empStr.concat(' ');
-            empStr = empStr.concat(result[i].last_name);
-            empArr.push(empStr);
+    
+    return new Promise((resolve, reject) => {
+        db.query(sql, (err, result) => {
+            if (err) {
+            console.log(err);
+            return;
+            } else {
+                for (i = 0; i < result.length; i++) {
+                    let empStr = '';
+                    empStr = empStr.concat(result[i].first_name);
+                    empStr = empStr.concat(' ');
+                    empStr = empStr.concat(result[i].last_name);
+                    empArr.push(empStr);
+                }
+                resolve(empArr);
+            }
+        });
+    })
+}
+
+function populateRoles() {
+    const sql = `SELECT * FROM emp_role`;
+    const roleArr = [];
+
+    return new Promise((resolve, reject) => {
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.log(err);
+            } else {
+                // console.log('result:', result);
+                for (i = 0; i < result.length; i++) {
+                    let roleStr = `${result[i].id}: ${result[i].title} in ${result[i].department_id}.`
+                    roleArr.push(roleStr);
+                }
+                resolve(roleArr);
+            }
+        })
+    })
+}
+
+function changeEmployeeRole(emp, newRole) {
+    let nameArr = emp.split(' ');
+    const firstName = nameArr[0];
+    const lastName = nameArr[1];
+    let roleArr = newRole.split(' ');
+    let roleVar = roleArr[0];
+    roleVar = Number(roleVar[0]);
+
+    const sql = `UPDATE employee SET role_id = (?) WHERE first_name = ${String(firstName)} AND last_name = ${String(lastName)}`;
+
+    db.query(sql, roleVar, (err, rows) => {
+        if (err) {
+            console.log(err);;
+            return;
+        } else {
+            console.log('Success!');
         }
-        return empArr;
-    }
-  });
+    })
 }
 
 function showAllDepartments() {
     const sql = `SELECT * FROM department`;
     db.query(sql, (err, rows) => {
         if (err) {
-            res.status(500).json({ error: err.message });
+            console.log(err);
             return;
         }
         console.log("\n");;
@@ -71,11 +129,24 @@ function showAllDepartments() {
     });
 }
 
+function addNewDepartment(detailsArr) {
+    const sql = `INSERT INTO department (department_name)
+    VALUES (?)`;
+    db.query(sql, detailsArr, (err, result) => {
+        if (err) {
+        console.log(err);
+        return;
+        } else {
+            console.log("Success!");
+        }
+  });
+}
+
 function showAllRoles() {
     const sql = `SELECT * FROM emp_role`;
     db.query(sql, (err, rows) => {
         if (err) {
-            res.status(500).json({ error: err.message });
+            console.log(err);;
             return;
         }
         console.log("\n");
@@ -84,4 +155,17 @@ function showAllRoles() {
     });
 }
 
-module.exports = {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees};
+function addNewRole(detailsArr) {
+    const sql = `INSERT INTO emp_role (title, salary, department_id)
+    VALUES (?, ?, ?)`;
+    db.query(sql, detailsArr, (err, result) => {
+        if (err) {
+        console.log(err);
+        return;
+        } else {
+            console.log("Success!");
+        }
+  });
+}
+
+module.exports = {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole};

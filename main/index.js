@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees} = require('./lib/helpers');
-const util = require('util');
+const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole} = require('./lib/helpers');
+const mysql = require('mysql2');
 
 function init() {
     whatToDo();
@@ -30,8 +30,8 @@ function whatToDo() {
                     addEmployee(val.choice);
                     break;
 
-                case 'Update Employee Role':
-                    updateEmployee(val.choice);
+                case 'Update Employee Role': 
+                    chooseEmployees();
                     break;
 
                 case 'View All Roles':
@@ -59,11 +59,7 @@ function whatToDo() {
 
 function viewEmployees(val) {
     showAllEmployees();
-    if(val !== 'Quit'){
-        setTimeout(() => {
-            whatToDo();
-        }, 1000);
-    }
+    asyncHelper(val);
 }
 
 function addEmployee(val) {
@@ -87,79 +83,126 @@ function addEmployee(val) {
         ])
         .then(val => {
             const details = Object.values(val);
-            console.log(details);
             newEmployee(details);
+            asyncHelper(val);
         })
-
-        if(val !== 'Quit'){
-            setTimeout(() => {
-                whatToDo();
-            }, 1000);
-        }
 }
 
-function updateEmployee(val) {
-    let empName = '';
-    const empArr = populateEmployees();
+async function chooseEmployees() {
+   let empArr = await populateEmployees();
+   updateEmployee(empArr);
+}
 
-    inquirer
-        .prompt([
+function updateEmployee(emps) {
+    
+        inquirer.prompt([
             {
                 type: 'list',
                 name: 'choice',
                 message: 'Which employee would you like to update?',
-                choices: empArr
+                choices: emps
             }
         ])
         .then(val => {
-            empName = empName.concat(val.name);
-            inquirer
-                .prompt([
+            console.log('val.choice:', val.choice);
+            let empChoice = val.choice;
+            ( async function () { 
+                let roleArr = await populateRoles();
+                inquirer.prompt([
                     {
-                        type: 'input',
-                        name: 'firstName',
-                        message: "Please enter employee's first name."
-                    },
-                    {
-                        type: 'input',
-                        name: 'lastName',
-                        message: "Please enter employee's last name."
-                    },
-                    {
-                        type: 'input',
-                        name: 'roleId',
-                        message: "Please enter employee's Role ID."
+                        type: 'list',
+                        name: 'choice',
+                        message: 'Please select new role: ',
+                        choices: roleArr
                     }
                 ])
-        })
-    .then(val => {
-        const details = Object.values(val);
-        console.log(details);
-        // newEmployee(details);
-    })
-    if(val !== 'Quit'){
-        setTimeout(() => {
-            whatToDo();
-        }, 1000);
-    }
+                .then(val => {
+                    changeEmployeeRole(empChoice, val.choice);
+                })
+            })();
+        });
+            // resolve();
+    //         inquirer
+    //             .prompt([
+    //                 {
+    //                     type: 'input',
+    //                     name: 'firstName',
+    //                     message: "Please enter employee's first name."
+    //                 },
+    //                 {
+    //                     type: 'input',
+    //                     name: 'lastName',
+    //                     message: "Please enter employee's last name."
+    //                 },
+    //                 {
+    //                     type: 'input',
+    //                     name: 'roleId',
+    //                     message: "Please enter employee's Role ID."
+    //                 }
+    //             ])
+    //     })
+    // // })
+    //     .then(val => {
+    //         const details = Object.values(val);
+    //         console.log(details);
+    //         // newEmployee(details);
+        // })
+        // asyncHelper(val);
+        
 }
 
 function viewDepartments(val) {
     showAllDepartments();
-    if(val !== 'Quit'){
-        setTimeout(() => {
-            whatToDo();
-        }, 1000);
-    }
+    asyncHelper(val);
+}
+
+function addDepartment(val) {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'newDept',
+                message: "Please enter the new Department Name: "
+            }
+        ])
+        .then((val => {
+            const details = Object.values(val);
+            addNewDepartment(details);
+            asyncHelper(val);
+        }))
 }
 
 function viewRoles(val) {
     showAllRoles();
-    if(val !== 'Quit'){
-        setTimeout(() => {
-            whatToDo();
-        }, 1000);
-    }
+    asyncHelper(val);
+}
+
+function addRole(val) {
+
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'newRole',
+                message: "Please enter the new role title: "
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: "Please enter the new role salary: "
+            },
+            {
+                type: 'input',
+                name: 'deptId',
+                message: "Please enter the new role Department ID: "
+            }
+        ])
+        .then((val => {
+            const details = Object.values(val);
+            addNewRole(details);
+            asyncHelper(val);
+        }))
+        
 }
 
 function quit() {
@@ -167,11 +210,12 @@ function quit() {
     process.exit();
 }
 
-
-
-
-
+function asyncHelper(val) {
+    if(val !== 'Quit'){
+        setTimeout(() => {
+            whatToDo();
+        }, 1000);
+    }
+}
 
 init();
-
-// module.exports = {whatToDo};
