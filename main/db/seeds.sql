@@ -11,7 +11,11 @@ VALUES  ("Engineer", 150000, 1),
         ("Accountant", 80000, 3),
         ("Marketing Associate", 95000, 4),
         ("HR Analyst", 25000, 5),
-        ("Manager", 200000, 1);
+        ("Manager", 200000, 1),
+        ("Manager", 175000, 2),
+        ("Manager", 170000, 3),
+        ("Manager", 150000, 4),
+        ("Manager", 50000, 5);
 
 INSERT INTO employee (first_name, last_name, role_id)
 VALUES  ("Joe", "Schmoe", 1),
@@ -19,4 +23,4 @@ VALUES  ("Joe", "Schmoe", 1),
         ("Bean", "Counter", 3),
         ("Bubble", "Wubbles", 4),
         ("Karen", "Smith", 5),
-        ("Tony", "Soprano", 1);
+        ("Tony", "Soprano", 6);

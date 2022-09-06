@@ -12,7 +12,7 @@ CREATE TABLE emp_role (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(30) NOT NULL,
     salary DECIMAL NOT NULL,
-    department_id INT NOT NULL,
+    department_id INT,
     FOREIGN KEY (department_id)
     REFERENCES department(id)
     -- ON DELETE SET NULL
@@ -24,9 +24,10 @@ CREATE TABLE employee (
     last_name VARCHAR(30) NOT NULL,
     role_id INT NOT NULL,
     FOREIGN KEY (role_id)
-    REFERENCES emp_role(id)
+    REFERENCES emp_role(id),
     -- ON DELETE SET NULL
-    -- manager_id INT,
+    manager_id INT
     -- FOREIGN KEY (manager_id)
-    -- REFERENCES emp_role(id) WHERE emp_role(title) = "Manager";
+    -- -- REFERENCES emp_role(id) WHERE emp_role(title) = "Manager";
+    -- id AS  (CASE WHEN [role_id] = 'E' THEN [ChannelID] ELSE NULL END) PERSISTED REFERENCES Emails (EmailID)
 );
