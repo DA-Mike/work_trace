@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-const {showAllEmployees, showAllDepartments} = require('./lib/helpers');
+const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees} = require('./lib/helpers');
+const util = require('util');
 
 function init() {
     whatToDo();
@@ -22,31 +23,31 @@ function whatToDo() {
         .then(val => {
             switch(val.choice) {
                 case 'View All Employees':
-                    viewEmployees.then(whatToDo());
+                    viewEmployees(val.choice);
                     break;
 
                 case 'Add Employee':
-                    addEmployee();
+                    addEmployee(val.choice);
                     break;
 
                 case 'Update Employee Role':
-                    updateEmployee();
+                    updateEmployee(val.choice);
                     break;
 
                 case 'View All Roles':
-                    viewRoles();
+                    viewRoles(val.choice);
                     break;
 
                 case 'Add Role':
-                    addRole();
+                    addRole(val.choice);
                     break;
 
                 case 'View All Departments':
-                    viewDepartments();
+                    viewDepartments(val.choice);
                     break;
 
                 case 'Add Department':
-                    addDepartment();
+                    addDepartment(val.choice);
                     break;
                 
                 default:
@@ -56,23 +57,115 @@ function whatToDo() {
         })
 }
 
-// function viewEmployees() {
-//     showAllEmployees(); //.then(whatToDo());
-// }
-
-// const viewEmployees = () => new Promise((resolve, reject) => {
-//     resolve(showAllEmployees());
-// });
-
-const viewEmployees = new Promise((resolve, reject) => {
+function viewEmployees(val) {
     showAllEmployees();
-    resolve();
-});
-
-function viewDepartments() {
-    showAllDepartments();
+    if(val !== 'Quit'){
+        setTimeout(() => {
+            whatToDo();
+        }, 1000);
+    }
 }
 
+function addEmployee(val) {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'firstName',
+                message: "Please enter employee's first name: "
+            },
+            {
+                type: 'input',
+                name: 'lastName',
+                message: "Please enter employee's last name: "
+            },
+            {
+                type: 'input',
+                name: 'roleId',
+                message: "Please enter employee's Role ID: "
+            }
+        ])
+        .then(val => {
+            const details = Object.values(val);
+            console.log(details);
+            newEmployee(details);
+        })
+
+        if(val !== 'Quit'){
+            setTimeout(() => {
+                whatToDo();
+            }, 1000);
+        }
+}
+
+function updateEmployee(val) {
+    let empName = '';
+    const empArr = populateEmployees();
+
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'choice',
+                message: 'Which employee would you like to update?',
+                choices: empArr
+            }
+        ])
+        .then(val => {
+            empName = empName.concat(val.name);
+            inquirer
+                .prompt([
+                    {
+                        type: 'input',
+                        name: 'firstName',
+                        message: "Please enter employee's first name."
+                    },
+                    {
+                        type: 'input',
+                        name: 'lastName',
+                        message: "Please enter employee's last name."
+                    },
+                    {
+                        type: 'input',
+                        name: 'roleId',
+                        message: "Please enter employee's Role ID."
+                    }
+                ])
+        })
+    .then(val => {
+        const details = Object.values(val);
+        console.log(details);
+        // newEmployee(details);
+    })
+    if(val !== 'Quit'){
+        setTimeout(() => {
+            whatToDo();
+        }, 1000);
+    }
+}
+
+function viewDepartments(val) {
+    showAllDepartments();
+    if(val !== 'Quit'){
+        setTimeout(() => {
+            whatToDo();
+        }, 1000);
+    }
+}
+
+function viewRoles(val) {
+    showAllRoles();
+    if(val !== 'Quit'){
+        setTimeout(() => {
+            whatToDo();
+        }, 1000);
+    }
+}
+
+function quit() {
+    console.log("Goodbye!");
+    process.exit();
+}
 
 
 
