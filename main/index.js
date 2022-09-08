@@ -3,11 +3,9 @@ const cTable = require('console.table');
 const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments} = require('./lib/helpers');
 const mysql = require('mysql2');
 
-function init() {
-    whatToDo();
-}
+const init = () => whatToDo();
 
-function whatToDo() {
+const whatToDo = () => {
 
     console.log("Employee Manager");
 
@@ -57,17 +55,16 @@ function whatToDo() {
         })
 }
 
-function viewEmployees(val) {
+const viewEmployees = (val) => {
     showAllEmployees();
     asyncHelper(val);
 }
 
-function addEmployee(val) {
+const addEmployee = async (val) => {
 
     ( async function () {
         const roleArr = await populateRoles();
         const managerArr = await populateManagers();
-        console.log('managerArr:', managerArr);
             
     inquirer
         .prompt([
@@ -96,55 +93,48 @@ function addEmployee(val) {
         ])
         .then(val => {
             const details = Object.values(val);
-
             newEmployee(details);
             asyncHelper(val);
         })
     })()
 }
 
-async function chooseEmployees() {
+const chooseEmployees = async () => {
    let empArr = await populateEmployees();
    updateEmployee(empArr);
 }
 
-function updateEmployee(emps) {
-    
+const updateEmployee = async (emps) => {
+
+        let roleArr = await populateRoles();
+
         inquirer.prompt([
             {
                 type: 'list',
                 name: 'choice',
                 message: 'Which employee would you like to update?',
                 choices: emps
+            },
+            {
+                type: 'list',
+                name: 'newRole',
+                message: 'Please select new role: ',
+                choices: roleArr
             }
         ])
         .then(val => {
-            console.log('val.choice:', val.choice);
-            let empChoice = val.choice;
-            ( async function () { 
-                let roleArr = await populateRoles();
-                inquirer.prompt([
-                    {
-                        type: 'list',
-                        name: 'choice',
-                        message: 'Please select new role: ',
-                        choices: roleArr
-                    }
-                ])
-                .then(val => {
-                    changeEmployeeRole(empChoice, val.choice);
-                    asyncHelper(val);
-                })
-            })();
-        });
+            const details = Object.values(val);
+            changeEmployeeRole(details);
+            asyncHelper(val);
+        })
 }
 
-function viewDepartments(val) {
+const viewDepartments = (val) => {
     showAllDepartments();
     asyncHelper(val);
 }
 
-function addDepartment(val) {
+const addDepartment = (val) => {
     inquirer
         .prompt([
             {
@@ -160,12 +150,12 @@ function addDepartment(val) {
         }))
 }
 
-function viewRoles(val) {
+const viewRoles = (val) => {
     showAllRoles();
     asyncHelper(val);
 }
 
-async function addRole(val) {
+const addRole = async (val) => {
 
     const deptArr = await populateDepartments();
 
@@ -196,12 +186,12 @@ async function addRole(val) {
         
 }
 
-function quit() {
+const quit = () => {
     console.log("Goodbye!");
     process.exit();
 }
 
-function asyncHelper(val) {
+const asyncHelper = (val) => {
     if(val !== 'Quit'){
         setTimeout(() => {
             whatToDo();

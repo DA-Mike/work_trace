@@ -11,7 +11,7 @@ const db = mysql.createConnection(
     console.log(`Connected to the company_db database.`)
   );
 
-function populateManagers() {
+const populateManagers = () => {
     const sql = `SELECT first_name, last_name FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.title = "Manager"`;
     const managerArr = [];
 
@@ -26,7 +26,6 @@ function populateManagers() {
                     managerStr = managerStr.concat(result[i].first_name);
                     managerStr = managerStr.concat(' ');
                     managerStr = managerStr.concat(result[i].last_name);
-                    // managerStr = managerStr.concat("None");
                     managerArr.push(managerStr);
                     managerArr.push("None");
                 }
@@ -36,7 +35,7 @@ function populateManagers() {
     })
 }
 
-function showAllEmployees() {
+const showAllEmployees = () => {
     const sql = `SELECT a.id , a.first_name, a.last_name, emp_role.title, department.department_name AS department, emp_role.salary, CONCAT(b.first_name, ' ', b.last_name) AS manager
     FROM employee a
     JOIN emp_role ON a.role_id = emp_role.id
@@ -53,7 +52,7 @@ function showAllEmployees() {
     });
 };
 
-async function newEmployee(detailsArr) {
+const newEmployee = async (detailsArr) => {
 
     let sql = '';
     if (detailsArr[3] === "None") {
@@ -68,7 +67,8 @@ async function newEmployee(detailsArr) {
         const nameArr = detailsArr[3].split(' ');
         detailsArr.pop();
 
-        const query1 = await pickRole(detailsArr);
+        const query1 = await pickRole(detailsArr[2]);
+        detailsArr[2] = query1;
         const query2 = await pickManager(detailsArr, nameArr);
         
         sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
@@ -77,8 +77,8 @@ async function newEmployee(detailsArr) {
     }
     db.query(sql, detailsArr, (err, result) => {
         if (err) {
-        console.log('sql2 error:', err);
-        return;
+            console.log('sql2 error:', err);
+            return;
         } else {
             console.log("Success!");
         }
@@ -101,7 +101,7 @@ const pickManager = async (detailsArr, nameArr) => {
     });
 };
 
-function populateEmployees() {
+const populateEmployees = () => {
     const sql = `SELECT first_name, last_name FROM employee`;
     const empArr = [];
     
@@ -124,7 +124,7 @@ function populateEmployees() {
     })
 }
 
-function populateRoles() {
+const populateRoles = () => {
     const sql = `SELECT * FROM emp_role`;
     const roleArr = [];
 
@@ -137,15 +137,14 @@ function populateRoles() {
                     let roleStr = `${result[i].title}`
                     roleArr.push(roleStr);
                 }
-                // console.log('roleArr:', roleArr);
                 resolve(roleArr);
             }
         })
     })
 }
 
-const pickRole = async (detailsArr) => {
-    const sql = `SELECT id FROM emp_role WHERE emp_role.title = "${detailsArr[2]}";`
+const pickRole = async (arr) => {
+    const sql = `SELECT id FROM emp_role WHERE emp_role.title = "${arr}";`
 
     return new Promise((resolve, reject) => {
         db.query(sql, (err, result) => {
@@ -153,25 +152,25 @@ const pickRole = async (detailsArr) => {
             console.log('sql1 error:', err);
             return;
         } else {
-            detailsArr[2] = result[0].id;
-            console.log('detailsArr:', detailsArr);
-            resolve(detailsArr);
+            console.log('result:', result);
+            arr = result[0].id;
+            console.log('detailsArr:', arr);
+            resolve(arr);
         }
         });
     });
 }
 
-function changeEmployeeRole(emp, newRole) {
-    let nameArr = emp.split(' ');
+const changeEmployeeRole = async (detailsArr) => {
+    let nameArr = detailsArr[0].split(' ');
     const firstName = nameArr[0].toString();
     const lastName = nameArr[1].toString();
-    let roleArr = newRole.split(' ');
-    let roleVar = parseInt(roleArr[0]);
-    // roleVar = parseInt(roleVar);
+
+    const query = await pickRole(detailsArr[1]);
 
     const sql = `UPDATE employee SET role_id = (?) WHERE first_name = "${firstName}"AND last_name = "${lastName}"`;
 
-    db.query(sql, roleVar, (err, rows) => {
+    db.query(sql, query, (err, rows) => {
         if (err) {
             console.log(err);;
             return;
@@ -181,7 +180,7 @@ function changeEmployeeRole(emp, newRole) {
     })
 }
 
-function showAllDepartments() {
+const showAllDepartments = () => {
     const sql = `SELECT * FROM department`;
     db.query(sql, (err, rows) => {
         if (err) {
@@ -207,7 +206,6 @@ const populateDepartments = () => {
                     let deptStr = `${result[i].department_name}`
                     deptArr.push(deptStr);
                 }
-                // console.log('roleArr:', roleArr);
                 resolve(deptArr);
             }
         })
@@ -220,18 +218,17 @@ const pickDepartment = async (detailsArr) => {
     return new Promise((resolve, reject) => {
         db.query(sql, (err, result) => {
         if (err) {
-            console.log('sql1 error:', err);
+            console.log(err);
             return;
         } else {
             detailsArr[2] = result[0].id;
-            console.log('detailsArr:', detailsArr);
             resolve(detailsArr);
         }
         });
     });
 }
 
-function addNewDepartment(detailsArr) {
+const addNewDepartment = (detailsArr) => {
     const sql = `INSERT INTO department (department_name)
     VALUES (?)`;
     db.query(sql, detailsArr, (err, result) => {
@@ -244,7 +241,7 @@ function addNewDepartment(detailsArr) {
   });
 }
 
-function showAllRoles() {
+const showAllRoles = () => {
     const sql = `SELECT emp_role.id, emp_role.title, department.department_name AS department, emp_role.salary AS salary
     FROM emp_role
     INNER JOIN department ON emp_role.department_id = department.id`;
@@ -259,7 +256,7 @@ function showAllRoles() {
     });
 }
 
-async function addNewRole(detailsArr) {
+const addNewRole= async (detailsArr) => {
 
     const query = await pickDepartment(detailsArr);
 
@@ -267,8 +264,8 @@ async function addNewRole(detailsArr) {
     VALUES (?, ?, ?)`;
     db.query(sql, detailsArr, (err, result) => {
         if (err) {
-        console.log(err);
-        return;
+            console.log(err);
+            return;
         } else {
             console.log("Success!");
         }
