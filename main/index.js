@@ -70,11 +70,11 @@ const viewEmployees = async (val) => {
 // adds employee
 const addEmployee = async (val) => {
 
-        // populates roleArr with current roles
-        const roleArr = await populateRoles();
+    // populates roleArr with current roles
+    const roleArr = await populateRoles();
 
-        // populates managerArr with current managers
-        const managerArr = await populateManagers();
+    // populates managerArr with current managers
+    const managerArr = await populateManagers();
         
     const input = await inquirer.prompt([
             {
