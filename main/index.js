@@ -1,4 +1,5 @@
 const inquirer = require('inquirer');
+// import SQL helper functions
 const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments, viewEmpsByMngr, viewEmpsByDept} = require('./lib/helpers');
 
 // initializes app
@@ -60,7 +61,7 @@ const whatToDo = async () => {
     }
 }
 
-// calls on helper function to display all employees
+// calls on helper function to display all employees (all following functions call on various helpers)
 const viewEmployees = async (val) => {
     const showAll = await showAllEmployees();
     whatToDo();
@@ -135,9 +136,11 @@ const updateEmployee = async (emps) => {
         whatToDo();
 }
 
+// displays employees by seleccted manager
 const viewEmployeesByManager = async (val) => {
 
     const managerArr = await populateManagers();
+
     const input = await inquirer.prompt([
         {
             type: 'list',
@@ -152,8 +155,10 @@ const viewEmployeesByManager = async (val) => {
 
 }
 
+// displays employees by selected department
 const viewEmployeesByDept = async (val) => {
     
+    // populates departments into array
     const deptArr = await populateDepartments();
 
     const input = await inquirer.prompt([
@@ -230,15 +235,6 @@ const quit = () => {
     console.log("Goodbye!");
     process.exit();
 }
-
-// a little helper that helps with sequential prompt formatting
-// const asyncHelper = (val) => {
-//     if(val !== 'Quit'){
-//         setTimeout(() => {
-//             whatToDo();
-//         }, 1000);
-//     }
-// }
 
 // initializes app
 init();
