@@ -3,10 +3,10 @@ const cTable = require('console.table');
 const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments} = require('./lib/helpers');
 const mysql = require('mysql2');
 
-//initializes app
+// initializes app
 const init = () => whatToDo();
 
-//initial prompt
+// initial prompt
 const whatToDo = () => {
 
     console.log("Employee Manager");
@@ -57,19 +57,19 @@ const whatToDo = () => {
         })
 }
 
-//calls on helper function to display all employees
+// calls on helper function to display all employees
 const viewEmployees = (val) => {
     showAllEmployees();
     asyncHelper(val);
 }
 
-//adds employee
+// adds employee
 const addEmployee = async (val) => {
 
-        //populates roleArr with current roles
+        // populates roleArr with current roles
         const roleArr = await populateRoles();
 
-        //populates managerArr with current managers
+        // populates managerArr with current managers
         const managerArr = await populateManagers();
             
     inquirer
@@ -104,16 +104,16 @@ const addEmployee = async (val) => {
         })
 }
 
-//a little helper function which assists with updateEmployee()
+// a little helper function which assists with updateEmployee()
 const chooseEmployees = async () => {
    let empArr = await populateEmployees();
    updateEmployee(empArr);
 }
 
-//updates employee role
+// updates employee role
 const updateEmployee = async (emps) => {
 
-        //populates roleArr with current roles
+        // populates roleArr with current roles
         let roleArr = await populateRoles();
 
         inquirer.prompt([
@@ -137,13 +137,13 @@ const updateEmployee = async (emps) => {
         })
 }
 
-//displays all departments
+// displays all departments
 const viewDepartments = (val) => {
     showAllDepartments();
     asyncHelper(val);
 }
 
-//adds department
+// adds department
 const addDepartment = (val) => {
     inquirer
         .prompt([
@@ -160,13 +160,13 @@ const addDepartment = (val) => {
         }))
 }
 
-//displays all roles
+// displays all roles
 const viewRoles = (val) => {
     showAllRoles();
     asyncHelper(val);
 }
 
-//adds new role
+// adds new role
 const addRole = async (val) => {
 
     const deptArr = await populateDepartments();
@@ -198,13 +198,13 @@ const addRole = async (val) => {
         
 }
 
-//quits app
+// quits app
 const quit = () => {
     console.log("Goodbye!");
     process.exit();
 }
 
-//a little helper that helps with sequential prompt formatting
+// a little helper that helps with sequential prompt formatting
 const asyncHelper = (val) => {
     if(val !== 'Quit'){
         setTimeout(() => {
@@ -213,5 +213,5 @@ const asyncHelper = (val) => {
     }
 }
 
-//initializes app
+// initializes app
 init();

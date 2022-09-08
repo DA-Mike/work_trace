@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 const cTable = require('console.table');
 
-//connects to db
+// connects to db
 const db = mysql.createConnection(
     {
       host: 'localhost',
@@ -12,7 +12,7 @@ const db = mysql.createConnection(
     console.log(`Connected to the company_db database.`)
   );
 
-//query which returns all employees
+// query which returns all employees
 const showAllEmployees = () => {
     const sql = `SELECT a.id , a.first_name, a.last_name, emp_role.title, department.department_name AS department, emp_role.salary, CONCAT(b.first_name, ' ', b.last_name) AS manager
     FROM employee a
@@ -30,7 +30,7 @@ const showAllEmployees = () => {
     });
 };
 
-//adds new employee
+// adds new employee
 const newEmployee = async (detailsArr) => {
 
     let sql = '';
@@ -65,7 +65,7 @@ const newEmployee = async (detailsArr) => {
     });
 }
 
-//query returns array of current employees
+// query returns array of current employees
 const populateEmployees = () => {
     const sql = `SELECT first_name, last_name FROM employee`;
     const empArr = [];
@@ -89,7 +89,7 @@ const populateEmployees = () => {
     })
 }
 
-//populates and returns an array with current managers
+// populates and returns an array with current managers
 const populateManagers = () => {
     const sql = `SELECT first_name, last_name FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.title = "Manager"`;
     const managerArr = [];
@@ -114,7 +114,7 @@ const populateManagers = () => {
     })
 }
 
-//query finds manager ID
+// query finds manager ID
 const pickManager = async (detailsArr, nameArr) => {
 
     return new Promise((resolve, reject) => {
@@ -130,7 +130,7 @@ const pickManager = async (detailsArr, nameArr) => {
     });
 };
 
-//query returns all roles
+// query returns all roles
 const showAllRoles = () => {
     const sql = `SELECT emp_role.id, emp_role.title, department.department_name AS department, emp_role.salary AS salary
     FROM emp_role
@@ -146,7 +146,7 @@ const showAllRoles = () => {
     });
 }
 
-//query inserts new role
+// query inserts new role
 const addNewRole= async (detailsArr) => {
 
     const query = await pickDepartment(detailsArr);
@@ -163,7 +163,7 @@ const addNewRole= async (detailsArr) => {
   });
 }
 
-//query populates and returns array of current roles
+// query populates and returns array of current roles
 const populateRoles = () => {
     const sql = `SELECT * FROM emp_role`;
     const roleArr = [];
@@ -183,7 +183,7 @@ const populateRoles = () => {
     })
 }
 
-//query returns role ID
+// query returns role ID
 const pickRole = async (arr) => {
     const sql = `SELECT id FROM emp_role WHERE emp_role.title = "${arr}";`
 
@@ -202,7 +202,7 @@ const pickRole = async (arr) => {
     });
 }
 
-//query updates employee role
+// query updates employee role
 const changeEmployeeRole = async (detailsArr) => {
     let nameArr = detailsArr[0].split(' ');
     const firstName = nameArr[0].toString();
@@ -222,7 +222,7 @@ const changeEmployeeRole = async (detailsArr) => {
     })
 }
 
-//query displays all departments
+// query displays all departments
 const showAllDepartments = () => {
     const sql = `SELECT * FROM department`;
     db.query(sql, (err, rows) => {
@@ -236,7 +236,7 @@ const showAllDepartments = () => {
     });
 }
 
-//query populates array with current departments
+// query populates array with current departments
 const populateDepartments = () => {
     const sql = `SELECT * FROM department`;
     const deptArr = [];
@@ -256,7 +256,7 @@ const populateDepartments = () => {
     })
 }
 
-//query returns department ID
+// query returns department ID
 const pickDepartment = async (detailsArr) => {
     const sql = `SELECT id FROM department WHERE department.department_name = "${detailsArr[2]}";`
 
@@ -273,7 +273,7 @@ const pickDepartment = async (detailsArr) => {
     });
 }
 
-//inserts new department
+// inserts new department
 const addNewDepartment = (detailsArr) => {
     const sql = `INSERT INTO department (department_name)
     VALUES (?)`;
@@ -287,5 +287,5 @@ const addNewDepartment = (detailsArr) => {
   });
 }
 
-//exports functions
+// exports functions
 module.exports = {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments};
