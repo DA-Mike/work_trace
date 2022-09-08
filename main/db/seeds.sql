@@ -23,5 +23,5 @@ VALUES  ("Joe", "Schmoe", 1, 6),
         ("Bean", "Counter", 3, NULL),
         ("Bubble", "Wubbles", 4, NULL),
         ("Karen", "Smith", 5, NULL),
-        ("Tony", "Soprano", 6, NULL);
-        ("Tim Grim", 7, NULL)
+        ("Tony", "Soprano", 6, NULL),
+        ("Tim", "Grim", 7, NULL);
