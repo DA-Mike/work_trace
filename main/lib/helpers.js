@@ -26,7 +26,9 @@ function populateManagers() {
                     managerStr = managerStr.concat(result[i].first_name);
                     managerStr = managerStr.concat(' ');
                     managerStr = managerStr.concat(result[i].last_name);
+                    // managerStr = managerStr.concat("None");
                     managerArr.push(managerStr);
+                    managerArr.push("None");
                 }
                 resolve(managerArr);
             }
@@ -35,7 +37,7 @@ function populateManagers() {
 }
 
 function showAllEmployees() {
-    const sql = `SELECT a.id , a.first_name, a.last_name, emp_role.title, emp_role.salary, department.department_name AS department, CONCAT(b.first_name, ' ', b.last_name) AS manager
+    const sql = `SELECT a.id , a.first_name, a.last_name, emp_role.title, department.department_name AS department, emp_role.salary, CONCAT(b.first_name, ' ', b.last_name) AS manager
     FROM employee a
     JOIN emp_role ON a.role_id = emp_role.id
     JOIN department ON emp_role.department_id = department.id
@@ -52,38 +54,49 @@ function showAllEmployees() {
 };
 
 async function newEmployee(detailsArr) {
-    // console.log('detailsArr', detailsArr);
-    const nameArr = detailsArr[3].split(' ');
-    detailsArr.pop();
 
-    const query1 = await pickRole(detailsArr);
-    const query2 = await pickManager(detailsArr, nameArr);
-    
-    
-    const sql2 = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
-    VALUES (?, ?, ?, ?)`;
-    // console.log('detailsArr2:', detailsArr);
-    db.query(sql2, detailsArr, (err, result) => {
+    let sql = '';
+    if (detailsArr[3] === "None") {
+        detailsArr.pop();
+
+        const query1 = await pickRole(detailsArr);
+        
+        sql = `INSERT INTO employee (first_name, last_name, role_id)
+        VALUES (?, ?, ?)`;
+
+    } else {
+        const nameArr = detailsArr[3].split(' ');
+        detailsArr.pop();
+
+        const query1 = await pickRole(detailsArr);
+        const query2 = await pickManager(detailsArr, nameArr);
+        
+        sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+        VALUES (?, ?, ?, ?)`;
+        
+    }
+    db.query(sql, detailsArr, (err, result) => {
         if (err) {
         console.log('sql2 error:', err);
         return;
         } else {
             console.log("Success!");
         }
-  });
+    });
 }
 
 const pickManager = async (detailsArr, nameArr) => {
-    const sql = `SELECT id FROM employee WHERE employee.first_name = "${nameArr[0]}" AND employee.last_name = "${nameArr[1]}";`
 
     return new Promise((resolve, reject) => {
+
+        const sql = `SELECT id FROM employee WHERE employee.first_name = "${nameArr[0]}" AND employee.last_name = "${nameArr[1]}";`
         db.query(sql, (err, result) => {
-        if (err) {
-            console.log('sql1 error:', err);
-            return;
-        } else {
-            resolve(detailsArr.push(`${result[0].id}`));
-        }
+            if (err) {
+                console.log('sql1 error:', err);
+                return;
+            } else {
+                resolve(detailsArr.push(`${result[0].id}`));
+            }
         });
     });
 };
@@ -232,7 +245,9 @@ function addNewDepartment(detailsArr) {
 }
 
 function showAllRoles() {
-    const sql = `SELECT * FROM emp_role`;
+    const sql = `SELECT emp_role.id, emp_role.title, department.department_name AS department, emp_role.salary AS salary
+    FROM emp_role
+    INNER JOIN department ON emp_role.department_id = department.id`;
     db.query(sql, (err, rows) => {
         if (err) {
             console.log(err);;

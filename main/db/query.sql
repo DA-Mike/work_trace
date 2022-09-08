@@ -2,11 +2,11 @@
 -- FROM favorite_books
 -- JOIN book_prices ON favorite_books.book_price = book_prices.id;
 
-SELECT a.id , a.first_name, a.last_name, emp_role.title, emp_role.salary, department.department_name AS department, CONCAT(b.first_name, ' ', b.last_name) AS manager
-FROM employee a
-JOIN emp_role ON a.role_id = emp_role.id
-JOIN department ON emp_role.department_id = department.id
-LEFT JOIN employee b ON a.manager_id = b.id;
+-- SELECT a.id , a.first_name, a.last_name, emp_role.title, emp_role.salary, department.department_name AS department, CONCAT(b.first_name, ' ', b.last_name) AS manager
+-- FROM employee a
+-- JOIN emp_role ON a.role_id = emp_role.id
+-- JOIN department ON emp_role.department_id = department.id
+-- LEFT JOIN employee b ON a.manager_id = b.id;
 
 -- UPDATE employee SET manager = "NULL" WHERE employee.manager LIKE CONCAT('%', employee.first_name, '%'); -- AND a.manager LIKE a.last_name;
 
@@ -33,3 +33,7 @@ LEFT JOIN employee b ON a.manager_id = b.id;
 -- UPDATE employee SET  manager_id
 -- -- FROM employee A, employee B
 -- WHERE  emp_role.title = "Manager";
+
+SELECT emp_role.id, emp_role.title, department.department_name AS department, emp_role.salary AS salary
+FROM emp_role
+INNER JOIN department ON emp_role.department_id = department.id;
