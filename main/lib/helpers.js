@@ -1,6 +1,7 @@
 const mysql = require('mysql2');
 const cTable = require('console.table');
 
+//connects to db
 const db = mysql.createConnection(
     {
       host: 'localhost',
@@ -10,6 +11,7 @@ const db = mysql.createConnection(
     },
     console.log(`Connected to the company_db database.`)
   );
+
 //query which returns all employees
 const showAllEmployees = () => {
     const sql = `SELECT a.id , a.first_name, a.last_name, emp_role.title, department.department_name AS department, emp_role.salary, CONCAT(b.first_name, ' ', b.last_name) AS manager
