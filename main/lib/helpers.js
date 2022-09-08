@@ -61,6 +61,7 @@ const newEmployee = async (detailsArr) => {
             return;
         } else {
             console.log("Success!");
+            console.log("\n");
         }
     });
 }
@@ -97,8 +98,8 @@ const populateManagers = () => {
     return new Promise((resolve, reject) => {
         db.query(sql, (err, result) => {
             if (err) {
-            console.log(err);
-            return;
+                console.log(err);
+                return;
             } else {
                 for (i = 0; i < result.length; i++) {
                     let managerStr = '';
@@ -122,6 +123,7 @@ const pickManager = async (detailsArr, nameArr) => {
         const sql = `SELECT id FROM employee WHERE employee.first_name = "${nameArr[0]}" AND employee.last_name = "${nameArr[1]}";`
         db.query(sql, (err, result) => {
             if (err) {
+                console.log(err);
                 return;
             } else {
                 resolve(detailsArr.push(`${result[0].id}`));
@@ -159,6 +161,7 @@ const addNewRole= async (detailsArr) => {
             return;
         } else {
             console.log("Success!");
+            console.log("\n");
         }
   });
 }
@@ -190,12 +193,10 @@ const pickRole = async (arr) => {
     return new Promise((resolve, reject) => {
         db.query(sql, (err, result) => {
         if (err) {
-            console.log('sql1 error:', err);
+            console.log(err);
             return;
         } else {
-            console.log('result:', result);
             arr = result[0].id;
-            console.log('detailsArr:', arr);
             resolve(arr);
         }
         });
@@ -218,6 +219,7 @@ const changeEmployeeRole = async (detailsArr) => {
             return;
         } else {
             console.log('Success!');
+            console.log("\n");
         }
     })
 }

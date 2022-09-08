@@ -1,6 +1,5 @@
 const inquirer = require('inquirer');
 const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments} = require('./lib/helpers');
-const mysql = require('mysql2');
 
 // initializes app
 const init = () => whatToDo();
