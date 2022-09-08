@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole} = require('./lib/helpers');
+const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments} = require('./lib/helpers');
 const mysql = require('mysql2');
 
 function init() {
@@ -63,6 +63,12 @@ function viewEmployees(val) {
 }
 
 function addEmployee(val) {
+
+    ( async function () {
+        const roleArr = await populateRoles();
+        const managerArr = await populateManagers();
+        console.log('managerArr:', managerArr);
+            
     inquirer
         .prompt([
             {
@@ -76,16 +82,25 @@ function addEmployee(val) {
                 message: "Please enter employee's last name: "
             },
             {
-                type: 'input',
-                name: 'roleId',
-                message: "Please enter employee's Role ID: "
-            }
+                type: 'list',
+                name: 'role',
+                message: 'Assign employee to a role.',
+                choices: roleArr
+            },
+            {
+                type: 'list',
+                name: 'manager',
+                message: 'Assign employee to a manager.',
+                choices: managerArr
+            }   
         ])
         .then(val => {
             const details = Object.values(val);
+
             newEmployee(details);
             asyncHelper(val);
         })
+    })()
 }
 
 async function chooseEmployees() {
@@ -150,7 +165,9 @@ function viewRoles(val) {
     asyncHelper(val);
 }
 
-function addRole(val) {
+async function addRole(val) {
+
+    const deptArr = await populateDepartments();
 
     inquirer
         .prompt([
@@ -165,9 +182,10 @@ function addRole(val) {
                 message: "Please enter the new role salary: "
             },
             {
-                type: 'input',
-                name: 'deptId',
-                message: "Please enter the new role Department ID: "
+                type: 'list',
+                name: 'dept',
+                message: "Please choose the role's departments: ",
+                choices: deptArr
             }
         ])
         .then((val => {

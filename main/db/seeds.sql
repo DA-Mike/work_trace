@@ -18,7 +18,7 @@ VALUES  ("Engineer", 150000, 1),
         ("Manager", 50000, 5);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES  ("Joe", "Schmoe", 1, NULL),
+VALUES  ("Joe", "Schmoe", 1, 6),
         ("Valerie", "Mallory", 2, NULL),
         ("Bean", "Counter", 3, NULL),
         ("Bubble", "Wubbles", 4, NULL),
