@@ -1,5 +1,4 @@
 const inquirer = require('inquirer');
-const cTable = require('console.table');
 const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments} = require('./lib/helpers');
 const mysql = require('mysql2');
 
@@ -7,7 +6,7 @@ const mysql = require('mysql2');
 const init = () => whatToDo();
 
 // initial prompt
-const whatToDo = () => {
+const whatToDo = async () => {
 
     console.log("Employee Manager");
 
@@ -20,7 +19,7 @@ const whatToDo = () => {
                 choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
             }
         ])
-        .then(val => {
+    .then(val => {
             switch(val.choice) {
                 case 'View All Employees':
                     viewEmployees(val.choice);
