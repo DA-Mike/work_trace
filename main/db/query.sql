@@ -34,6 +34,8 @@
 -- -- FROM employee A, employee B
 -- WHERE  emp_role.title = "Manager";
 
-SELECT emp_role.id, emp_role.title, department.department_name AS department, emp_role.salary AS salary
-FROM emp_role
-INNER JOIN department ON emp_role.department_id = department.id;
+-- SELECT emp_role.id, emp_role.title, department.department_name AS department, emp_role.salary AS salary
+-- FROM emp_role
+-- INNER JOIN department ON emp_role.department_id = department.id;
+
+SELECT first_name, last_name FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.title LIKE "%Manager"

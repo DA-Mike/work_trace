@@ -9,8 +9,7 @@ const whatToDo = async () => {
 
     console.log("Employee Manager");
 
-    inquirer
-        .prompt([
+    const input = await inquirer.prompt([
             {
                 type: 'list',
                 name: 'choice',
@@ -18,47 +17,45 @@ const whatToDo = async () => {
                 choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
             }
         ])
-    .then(val => {
-            switch(val.choice) {
-                case 'View All Employees':
-                    viewEmployees(val.choice);
-                    break;
+    switch(input.choice) {
+        case 'View All Employees':
+            await viewEmployees(input.choice);
+            break;
 
-                case 'Add Employee':
-                    addEmployee(val.choice);
-                    break;
+        case 'Add Employee':
+            addEmployee(input.choice);
+            break;
 
-                case 'Update Employee Role': 
-                    chooseEmployees();
-                    break;
+        case 'Update Employee Role': 
+            chooseEmployees();
+            break;
 
-                case 'View All Roles':
-                    viewRoles(val.choice);
-                    break;
+        case 'View All Roles':
+            viewRoles(input.choice);
+            break;
 
-                case 'Add Role':
-                    addRole(val.choice);
-                    break;
+        case 'Add Role':
+            addRole(input.choice);
+            break;
 
-                case 'View All Departments':
-                    viewDepartments(val.choice);
-                    break;
+        case 'View All Departments':
+            viewDepartments(input.choice);
+            break;
 
-                case 'Add Department':
-                    addDepartment(val.choice);
-                    break;
-                
-                default:
-                    quit();
-                    break;
-            }
-        })
+        case 'Add Department':
+            addDepartment(input.choice);
+            break;
+        
+        default:
+            quit();
+            break;
+    }
 }
 
 // calls on helper function to display all employees
-const viewEmployees = (val) => {
-    showAllEmployees();
-    asyncHelper(val);
+const viewEmployees = async (val) => {
+    const showAll = await showAllEmployees();
+    whatToDo();
 }
 
 // adds employee
@@ -69,9 +66,8 @@ const addEmployee = async (val) => {
 
         // populates managerArr with current managers
         const managerArr = await populateManagers();
-            
-    inquirer
-        .prompt([
+        
+    const input = await inquirer.prompt([
             {
                 type: 'input',
                 name: 'firstName',
@@ -95,11 +91,9 @@ const addEmployee = async (val) => {
                 choices: managerArr
             }   
         ])
-        .then(val => {
-            const details = Object.values(val);
-            newEmployee(details);
-            asyncHelper(val);
-        })
+        const details = Object.values(input);
+        const addNew = await newEmployee(details);
+        whatToDo();
 }
 
 // a little helper function which assists with updateEmployee()
@@ -114,7 +108,7 @@ const updateEmployee = async (emps) => {
         // populates roleArr with current roles
         let roleArr = await populateRoles();
 
-        inquirer.prompt([
+        const input = await inquirer.prompt([
             {
                 type: 'list',
                 name: 'choice',
@@ -128,40 +122,36 @@ const updateEmployee = async (emps) => {
                 choices: roleArr
             }
         ])
-        .then(val => {
-            const details = Object.values(val);
-            changeEmployeeRole(details);
-            asyncHelper(val);
-        })
+        const details = Object.values(input);
+        const change = await changeEmployeeRole(details);
+        whatToDo();
 }
 
 // displays all departments
-const viewDepartments = (val) => {
-    showAllDepartments();
-    asyncHelper(val);
+const viewDepartments = async (val) => {
+    const showAll = await showAllDepartments();
+    whatToDo();
 }
 
 // adds department
-const addDepartment = (val) => {
-    inquirer
-        .prompt([
+const addDepartment = async (val) => {
+
+    const input = await inquirer.prompt([
             {
                 type: 'input',
                 name: 'newDept',
                 message: "Please enter the new Department Name: "
             }
         ])
-        .then((val => {
-            const details = Object.values(val);
-            addNewDepartment(details);
-            asyncHelper(val);
-        }))
+    const details = Object.values(input);
+    const addNew = await addNewDepartment(details);
+    whatToDo();
 }
 
 // displays all roles
-const viewRoles = (val) => {
-    showAllRoles();
-    asyncHelper(val);
+const viewRoles = async (val) => {
+    const showAll = await showAllRoles();
+    whatToDo();
 }
 
 // adds new role
@@ -169,8 +159,7 @@ const addRole = async (val) => {
 
     const deptArr = await populateDepartments();
 
-    inquirer
-        .prompt([
+    const input = await inquirer.prompt([
             {
                 type: 'input',
                 name: 'newRole',
@@ -188,12 +177,9 @@ const addRole = async (val) => {
                 choices: deptArr
             }
         ])
-        .then((val => {
-            const details = Object.values(val);
-            addNewRole(details);
-            asyncHelper(val);
-        }))
-        
+    const details = Object.values(input);
+    const newRole = await addNewRole(details);
+    whatToDo();
 }
 
 // quits app
@@ -203,13 +189,13 @@ const quit = () => {
 }
 
 // a little helper that helps with sequential prompt formatting
-const asyncHelper = (val) => {
-    if(val !== 'Quit'){
-        setTimeout(() => {
-            whatToDo();
-        }, 1000);
-    }
-}
+// const asyncHelper = (val) => {
+//     if(val !== 'Quit'){
+//         setTimeout(() => {
+//             whatToDo();
+//         }, 1000);
+//     }
+// }
 
 // initializes app
 init();
