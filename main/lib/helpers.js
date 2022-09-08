@@ -94,6 +94,37 @@ const populateEmployees = () => {
     })
 }
 
+const viewEmpsByMngr = async (detailsArr) => {
+
+    if (detailsArr[0] === 'None') {
+        return console.log("\n");
+    }
+
+    const sql = `SELECT first_name, last_name FROM employee WHERE employee.manager_id = (?);`
+    const  query = await pickManager(detailsArr);
+    console.log('query', detailsArr);
+
+
+    return new Promise((resolve, reject) => {
+        db.query(sql, detailsArr[1], (err, result) => {
+            if (err) {
+                console.log(err);
+                return;
+            } else {
+                if (result.length == 0) {
+                    console.log("\n");
+                    resolve(console.log("No employees found."));
+                    console.log("\n");
+                } else {
+                    console.log("\n");
+                    resolve(console.table(result));
+                    console.log("\n");
+                }
+            }
+        });
+    });
+}
+
 // populates and returns an array with current managers
 const populateManagers = () => {
     const sql = `SELECT first_name, last_name FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.title LIKE "%Manager"`;
@@ -122,17 +153,36 @@ const populateManagers = () => {
 // query finds manager ID
 const pickManager = async (detailsArr, nameArr) => {
 
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT id FROM employee WHERE employee.first_name = "${nameArr[0]}" AND employee.last_name = "${nameArr[1]}";`
-        db.query(sql, (err, result) => {
-            if (err) {
-                console.log(err);
-                return;
-            } else {
-                resolve(detailsArr.push(`${result[0].id}`));
-            }
+    if (detailsArr[0] === 'None') {
+        return;
+    } else {
+        let sql = '';
+        let newArr = detailsArr[0].split(' ');
+        const firstName = newArr[0].toString();
+        const lastName = newArr[1].toString();
+
+        console.log('firstName:', firstName);
+        console.log('lastName', lastName);
+
+        if (nameArr === undefined) {
+            sql = `SELECT id FROM employee WHERE employee.first_name = "${firstName}" AND employee.last_name = "${lastName}";`
+        } else {
+            sql = `SELECT id FROM employee WHERE employee.first_name = "${nameArr[0]}" AND employee.last_name = "${nameArr[1]}";`
+        }
+
+        return new Promise((resolve, reject) => {
+            
+            db.query(sql, (err, result) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                } else {
+                    console.log(result);
+                    resolve(detailsArr.push(`${result[0].id}`));
+                }
+            });
         });
-    });
+    }
 };
 
 // query returns all roles
@@ -304,4 +354,4 @@ const addNewDepartment = (detailsArr) => {
 };
 
 // exports functions
-module.exports = {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments};
+module.exports = {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments, viewEmpsByMngr};

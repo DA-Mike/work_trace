@@ -38,4 +38,6 @@
 -- FROM emp_role
 -- INNER JOIN department ON emp_role.department_id = department.id;
 
-SELECT first_name, last_name FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.title LIKE "%Manager"
+-- SELECT first_name, last_name FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.title LIKE "%Manager"
+
+SELECT first_name, last_name FROM employee WHERE employee.manager_id = 7;

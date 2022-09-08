@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments} = require('./lib/helpers');
+const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments, viewEmpsByMngr} = require('./lib/helpers');
 
 // initializes app
 const init = () => whatToDo();
@@ -14,7 +14,7 @@ const whatToDo = async () => {
                 type: 'list',
                 name: 'choice',
                 message: 'What would you like to do?',
-                choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
+                choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'View Employees By Manager', 'Quit']
             }
         ])
     switch(input.choice) {
@@ -46,6 +46,10 @@ const whatToDo = async () => {
             addDepartment(input.choice);
             break;
         
+        case 'View Employees By Manager':
+            viewEmployeesByManager(input.choice);
+            break;
+
         default:
             quit();
             break;
@@ -125,6 +129,23 @@ const updateEmployee = async (emps) => {
         const details = Object.values(input);
         const change = await changeEmployeeRole(details);
         whatToDo();
+}
+
+const viewEmployeesByManager = async (val) => {
+
+    const managerArr = await populateManagers();
+    const input = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'choice',
+            message: 'Which manager would you like to view?',
+            choices: managerArr
+        },
+    ])
+    const details = Object.values(input);
+    const viewByMngr = await viewEmpsByMngr(details);
+    whatToDo();
+
 }
 
 // displays all departments
