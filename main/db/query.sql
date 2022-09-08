@@ -40,4 +40,6 @@
 
 -- SELECT first_name, last_name FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.title LIKE "%Manager"
 
-SELECT first_name, last_name FROM employee WHERE employee.manager_id = 7;
+-- SELECT first_name, last_name FROM employee WHERE employee.manager_id = 7;
+
+SELECT first_name, last_name FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.department_id = 1;

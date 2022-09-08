@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments, viewEmpsByMngr} = require('./lib/helpers');
+const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments, viewEmpsByMngr, viewEmpsByDept} = require('./lib/helpers');
 
 // initializes app
 const init = () => whatToDo();
@@ -14,7 +14,7 @@ const whatToDo = async () => {
                 type: 'list',
                 name: 'choice',
                 message: 'What would you like to do?',
-                choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'View Employees By Manager', 'Quit']
+                choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'View Employees By Manager', 'View Employees By Department', 'Quit']
             }
         ])
     switch(input.choice) {
@@ -48,6 +48,10 @@ const whatToDo = async () => {
         
         case 'View Employees By Manager':
             viewEmployeesByManager(input.choice);
+            break;
+
+        case 'View Employees By Department':
+            viewEmployeesByDept(input.choice);
             break;
 
         default:
@@ -144,6 +148,24 @@ const viewEmployeesByManager = async (val) => {
     ])
     const details = Object.values(input);
     const viewByMngr = await viewEmpsByMngr(details);
+    whatToDo();
+
+}
+
+const viewEmployeesByDept = async (val) => {
+    
+    const deptArr = await populateDepartments();
+
+    const input = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'choice',
+            message: 'Which department would you like to view?',
+            choices: deptArr
+        },
+    ])
+    const details = Object.values(input);
+    const viewEmps = await viewEmpsByDept(details);
     whatToDo();
 
 }

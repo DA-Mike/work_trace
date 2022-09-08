@@ -94,6 +94,7 @@ const populateEmployees = () => {
     })
 }
 
+// query returns employees working under selected manager
 const viewEmpsByMngr = async (detailsArr) => {
 
     if (detailsArr[0] === 'None') {
@@ -102,8 +103,6 @@ const viewEmpsByMngr = async (detailsArr) => {
 
     const sql = `SELECT first_name, last_name FROM employee WHERE employee.manager_id = (?);`
     const  query = await pickManager(detailsArr);
-    console.log('query', detailsArr);
-
 
     return new Promise((resolve, reject) => {
         db.query(sql, detailsArr[1], (err, result) => {
@@ -123,6 +122,32 @@ const viewEmpsByMngr = async (detailsArr) => {
             }
         });
     });
+}
+
+const viewEmpsByDept = async (detailsArr) => {
+    const sql = `SELECT first_name, last_name FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.department_id = (?);`;
+
+    const  query = await pickDepartment(detailsArr);
+
+    return new Promise((resolve, reject) => {
+        db.query(sql, detailsArr[0], (err, result) => {
+            if (err) {
+                console.log(err);
+                return;
+            } else {
+                if (result.length == 0) {
+                    console.log("\n");
+                    resolve(console.log("No employees found."));
+                    console.log("\n");
+                } else {
+                    console.log("\n");
+                    resolve(console.table(result));
+                    console.log("\n");
+                }
+            }
+        });
+    });
+
 }
 
 // populates and returns an array with current managers
@@ -155,34 +180,29 @@ const pickManager = async (detailsArr, nameArr) => {
 
     if (detailsArr[0] === 'None') {
         return;
-    } else {
-        let sql = '';
+    }
+    let sql = '';
+    
+    if (nameArr === undefined) {
         let newArr = detailsArr[0].split(' ');
         const firstName = newArr[0].toString();
         const lastName = newArr[1].toString();
-
-        console.log('firstName:', firstName);
-        console.log('lastName', lastName);
-
-        if (nameArr === undefined) {
-            sql = `SELECT id FROM employee WHERE employee.first_name = "${firstName}" AND employee.last_name = "${lastName}";`
-        } else {
-            sql = `SELECT id FROM employee WHERE employee.first_name = "${nameArr[0]}" AND employee.last_name = "${nameArr[1]}";`
-        }
-
-        return new Promise((resolve, reject) => {
-            
-            db.query(sql, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    return;
-                } else {
-                    console.log(result);
-                    resolve(detailsArr.push(`${result[0].id}`));
-                }
-            });
-        });
+        sql = `SELECT id FROM employee WHERE employee.first_name = "${firstName}" AND employee.last_name = "${lastName}";`
+    } else {
+        sql = `SELECT id FROM employee WHERE employee.first_name = "${nameArr[0]}" AND employee.last_name = "${nameArr[1]}";`
     }
+
+    return new Promise((resolve, reject) => {
+        
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.log(err);
+                return;
+            } else {
+                resolve(detailsArr.push(`${result[0].id}`));
+            }
+        });
+    });
 };
 
 // query returns all roles
@@ -321,7 +341,13 @@ const populateDepartments = () => {
 
 // query returns department ID
 const pickDepartment = async (detailsArr) => {
-    const sql = `SELECT id FROM department WHERE department.department_name = "${detailsArr[2]}";`
+
+    let sql = '';
+    if (detailsArr.length < 2) {
+        sql = `SELECT id FROM department WHERE department.department_name = "${detailsArr[0]}";`
+    } else {
+         sql = `SELECT id FROM department WHERE department.department_name = "${detailsArr[2]}";`
+    }
 
     return new Promise((resolve, reject) => {
         db.query(sql, (err, result) => {
@@ -329,8 +355,15 @@ const pickDepartment = async (detailsArr) => {
             console.log(err);
             return;
         } else {
-            detailsArr[2] = result[0].id;
-            resolve(detailsArr);
+            if (detailsArr.length < 2) {
+                console.log('result', result);
+                detailsArr[0] = result[0].id;
+                console.log('details', detailsArr);
+                resolve(detailsArr);
+            } else {
+                detailsArr[2] = result[0].id;
+                resolve(detailsArr);
+            }
         }
         });
     });
@@ -354,4 +387,4 @@ const addNewDepartment = (detailsArr) => {
 };
 
 // exports functions
-module.exports = {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments, viewEmpsByMngr};
+module.exports = {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments, viewEmpsByMngr, viewEmpsByDept};
