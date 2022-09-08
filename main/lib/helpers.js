@@ -94,7 +94,7 @@ const populateEmployees = () => {
     })
 }
 
-// query returns employees working under selected manager
+// *BONUS* query returns employees working under selected manager
 const viewEmpsByMngr = async (detailsArr) => {
 
     if (detailsArr[0] === 'None') {
@@ -124,7 +124,9 @@ const viewEmpsByMngr = async (detailsArr) => {
     });
 }
 
+// *BONUS* displays employess by department
 const viewEmpsByDept = async (detailsArr) => {
+
     const sql = `SELECT first_name, last_name FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.department_id = (?);`;
 
     const  query = await pickDepartment(detailsArr);
@@ -356,9 +358,7 @@ const pickDepartment = async (detailsArr) => {
             return;
         } else {
             if (detailsArr.length < 2) {
-                console.log('result', result);
                 detailsArr[0] = result[0].id;
-                console.log('details', detailsArr);
                 resolve(detailsArr);
             } else {
                 detailsArr[2] = result[0].id;

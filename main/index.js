@@ -136,7 +136,7 @@ const updateEmployee = async (emps) => {
         whatToDo();
 }
 
-// displays employees by seleccted manager
+// *BONUS* displays employees by selected manager
 const viewEmployeesByManager = async (val) => {
 
     const managerArr = await populateManagers();
@@ -155,7 +155,7 @@ const viewEmployeesByManager = async (val) => {
 
 }
 
-// displays employees by selected department
+// *BONUS* displays employees by selected department
 const viewEmployeesByDept = async (val) => {
     
     // populates departments into array
