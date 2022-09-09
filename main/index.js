@@ -144,6 +144,7 @@ const updateEmployee = async (emps) => {
         whatToDo();
 }
 
+// *BONUS* updates employee's manager
 const updateEmployeeManager = async (val) => {
 
     const empArr = await populateEmployees();
