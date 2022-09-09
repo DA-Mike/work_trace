@@ -21,7 +21,8 @@ Clone repo.
 
 ## Usage
 
-[![A video thumbnail shows the command-line employee management application with a play button overlaying the view.](./Assets/12-sql-homework-video-thumbnail.png)](https://2u-20.wistia.com/medias/2lnle7xnpk)
+
+[![Video Example](https://img.youtube.com/vi/rktACT-Wjis/0.jpg)](https://youtu.be/rktACT-Wjis)
 
 ## Contributing
 ### How to Contribute:
