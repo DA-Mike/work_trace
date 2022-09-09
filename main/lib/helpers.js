@@ -213,14 +213,20 @@ const pickManager = async (detailsArr, nameArr) => {
 // *BONUS* changes employee's manager
 const changeEmployeeManager = async (detailsArr) => {
 
+    let sql = '';
     let nameArr = detailsArr[0].split(' ');
     const firstName = nameArr[0].toString();
     const lastName = nameArr[1].toString();
     const deetsArr = detailsArr[1].split(' ');
 
-    const query = await pickManager(nameArr, deetsArr);
+    if (detailsArr[1] === 'None') {
+        sql = `UPDATE employee SET manager_id = NULL WHERE first_name = "${firstName}"AND last_name = "${lastName}"`;
+    } else {
 
-    const sql = `UPDATE employee SET manager_id = (?) WHERE first_name = "${firstName}"AND last_name = "${lastName}"`;
+        const query = await pickManager(nameArr, deetsArr);
+
+        sql = `UPDATE employee SET manager_id = (?) WHERE first_name = "${firstName}"AND last_name = "${lastName}"`;
+    }
     return new Promise((resolve, reject) => {
         db.query(sql, nameArr[2], (err, rows) => {
             if (err) {
