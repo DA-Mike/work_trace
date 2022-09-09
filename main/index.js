@@ -28,7 +28,8 @@ const whatToDo = async () => {
             break;
 
         case 'Update Employee Role': 
-            chooseEmployees();
+            // chooseEmployees();
+            updateEmployee(input.choice);
             break;
 
         case 'View All Roles':
@@ -113,24 +114,20 @@ const addEmployee = async (val) => {
         whatToDo();
 }
 
-// a little helper function which assists with updateEmployee()
-const chooseEmployees = async () => {
-   let empArr = await populateEmployees();
-   updateEmployee(empArr);
-}
-
 // updates employee role
-const updateEmployee = async (emps) => {
+const updateEmployee = async (val) => {
 
+        // populates empArr with current employees
+        const empArr = await populateEmployees();
         // populates roleArr with current roles
-        let roleArr = await populateRoles();
+        const roleArr = await populateRoles();
 
         const input = await inquirer.prompt([
             {
                 type: 'list',
                 name: 'choice',
                 message: 'Which employee would you like to update?',
-                choices: emps
+                choices: empArr
             },
             {
                 type: 'list',

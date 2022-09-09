@@ -3,7 +3,7 @@
 
 ## Description
 
-Work Trace is a command line app which utilizes node.js, mysql, and inquirer. It an employee management app which can help the user create and organize departments, roles, and employees within a company.
+Work Trace is a command line app which utilizes node.js, mysql, and inquirer. It is an employee management app which can help the user create and organize departments, roles, and employees within a company.
 
 My motiviation for this project was to learn more about how javascript/node.js can work with SQL and also learn more about SQL in general. This was a great way to introduce the merging of these two languages and functionalities. Additionally, this really honed in my skill in utilizing async/await and promisification. I really enjoy that I know how to deliberately create asynchronous operations.
 
