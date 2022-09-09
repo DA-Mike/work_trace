@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 // import SQL helper functions
-const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments, viewEmpsByMngr, viewEmpsByDept} = require('./lib/helpers');
+const {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments, viewEmpsByMngr, viewEmpsByDept, viewUtilBudget, changeEmployeeManager} = require('./lib/helpers');
 
 // initializes app
 const init = () => whatToDo();
@@ -15,7 +15,7 @@ const whatToDo = async () => {
                 type: 'list',
                 name: 'choice',
                 message: 'What would you like to do?',
-                choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'View Employees By Manager', 'View Employees By Department', 'Quit']
+                choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'View Employees By Manager', 'View Employees By Department', 'View Total Utilized Budget', "Change Employee's Manager", 'Quit']
             }
         ])
     switch(input.choice) {
@@ -53,6 +53,14 @@ const whatToDo = async () => {
 
         case 'View Employees By Department':
             viewEmployeesByDept(input.choice);
+            break;
+        
+        case 'View Total Utilized Budget':
+            viewUtilizedBudget(input.choice);
+            break;
+
+        case "Change Employee's Manager":
+            updateEmployeeManager(input.choice);
             break;
 
         default:
@@ -136,6 +144,30 @@ const updateEmployee = async (emps) => {
         whatToDo();
 }
 
+const updateEmployeeManager = async (val) => {
+
+    const empArr = await populateEmployees();
+    const managerArr = await populateManagers();
+
+    const input = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'choice',
+            message: 'Which employee would you like to update?',
+            choices: empArr
+        },
+        {
+            type: 'list',
+            name: 'newMngr',
+            message: 'Please select new role: ',
+            choices: managerArr
+        }
+    ])
+    const details = Object.values(input);
+    const change = await changeEmployeeManager(details);
+    whatToDo();
+}
+
 // *BONUS* displays employees by selected manager
 const viewEmployeesByManager = async (val) => {
 
@@ -152,7 +184,6 @@ const viewEmployeesByManager = async (val) => {
     const details = Object.values(input);
     const viewByMngr = await viewEmpsByMngr(details);
     whatToDo();
-
 }
 
 // *BONUS* displays employees by selected department
@@ -172,7 +203,6 @@ const viewEmployeesByDept = async (val) => {
     const details = Object.values(input);
     const viewEmps = await viewEmpsByDept(details);
     whatToDo();
-
 }
 
 // displays all departments
@@ -227,6 +257,12 @@ const addRole = async (val) => {
         ])
     const details = Object.values(input);
     const newRole = await addNewRole(details);
+    whatToDo();
+}
+
+// *BONUS* displays sum of employee salaries
+const viewUtilizedBudget = async (val) => {
+    const viewBudget = await viewUtilBudget();
     whatToDo();
 }
 

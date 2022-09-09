@@ -42,4 +42,16 @@
 
 -- SELECT first_name, last_name FROM employee WHERE employee.manager_id = 7;
 
-SELECT first_name, last_name FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.department_id = 1;
+-- SELECT first_name, last_name FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.department_id = 1;
+-- SELECT SUM(emp_role.salary) AS total_utilized_budget FROM employee JOIN emp_role ON employee.role_id = emp_role.id
+-- JOIN department ON emp_role.department_id = department.id
+
+-- WHERE employee.manager_id = 1
+
+-- SELECT a.first_name, a.last_name, b.title 
+-- FROM (SELECT first_name, last_name, role_id FROM employee WHERE manager_id = 6) AS a
+-- JOIN emp_role AS b WHERE b.id = a.role_id;
+
+SELECT a.first_name, a.last_name, b.title
+FROM (SELECT first_name, last_name, role_id FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.department_id = (1)) AS a
+JOIN emp_role AS b WHERE b.id = a.role_id;

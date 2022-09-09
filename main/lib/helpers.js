@@ -101,7 +101,9 @@ const viewEmpsByMngr = async (detailsArr) => {
         return console.log("\n");
     }
 
-    const sql = `SELECT first_name, last_name FROM employee WHERE employee.manager_id = (?);`
+    const sql = `SELECT a.first_name, a.last_name, b.title 
+    FROM (SELECT first_name, last_name, role_id FROM employee WHERE manager_id = (?)) AS a
+    JOIN emp_role AS b WHERE b.id = a.role_id;`
     const  query = await pickManager(detailsArr);
 
     return new Promise((resolve, reject) => {
@@ -127,7 +129,9 @@ const viewEmpsByMngr = async (detailsArr) => {
 // *BONUS* displays employess by department
 const viewEmpsByDept = async (detailsArr) => {
 
-    const sql = `SELECT first_name, last_name FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.department_id = (?);`;
+    const sql = `SELECT a.first_name, a.last_name, b.title
+    FROM (SELECT first_name, last_name, role_id FROM employee, emp_role WHERE employee.role_id = emp_role.id AND emp_role.department_id = (?)) AS a
+    JOIN emp_role AS b WHERE b.id = a.role_id;`;
 
     const  query = await pickDepartment(detailsArr);
 
@@ -149,7 +153,6 @@ const viewEmpsByDept = async (detailsArr) => {
             }
         });
     });
-
 }
 
 // populates and returns an array with current managers
@@ -201,11 +204,36 @@ const pickManager = async (detailsArr, nameArr) => {
                 console.log(err);
                 return;
             } else {
-                resolve(detailsArr.push(`${result[0].id}`));
+                return resolve(detailsArr.push(`${result[0].id}`));
             }
         });
     });
 };
+
+// *BONUS* changes employee's manager
+const changeEmployeeManager = async (detailsArr) => {
+
+    let nameArr = detailsArr[0].split(' ');
+    const firstName = nameArr[0].toString();
+    const lastName = nameArr[1].toString();
+    const deetsArr = detailsArr[1].split(' ');
+
+    const query = await pickManager(nameArr, deetsArr);
+
+    const sql = `UPDATE employee SET manager_id = (?) WHERE first_name = "${firstName}"AND last_name = "${lastName}"`;
+    return new Promise((resolve, reject) => {
+        db.query(sql, nameArr[2], (err, rows) => {
+            if (err) {
+                console.log(err);;
+                return;
+            } else {
+                console.log("\n");
+                resolve(console.log('Success!'));
+                console.log("\n");
+            }
+        });
+    }); 
+}
 
 // query returns all roles
 const showAllRoles = () => {
@@ -386,5 +414,25 @@ const addNewDepartment = (detailsArr) => {
     });
 };
 
+// *BONUS* displays sum of all employee salaries
+const viewUtilBudget = async () => {
+
+    const sql = `SELECT SUM(emp_role.salary) AS total_utilized_budget FROM employee JOIN emp_role ON employee.role_id = emp_role.id
+    JOIN department ON emp_role.department_id = department.id;`;
+
+    return new Promise((resolve, reject) => {
+        db.query(sql, (err, result) => {
+            if (err) {
+            console.log(err);
+            return;
+            } else {
+                console.log("\n")
+                resolve(console.table(result));
+                console.log("\n")
+            }
+        });
+    });
+}
+
 // exports functions
-module.exports = {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments, viewEmpsByMngr, viewEmpsByDept};
+module.exports = {showAllEmployees, showAllDepartments, showAllRoles, newEmployee, populateEmployees, addNewRole, addNewDepartment, populateRoles, changeEmployeeRole, populateManagers, populateDepartments, viewEmpsByMngr, viewEmpsByDept, viewUtilBudget, changeEmployeeManager};
